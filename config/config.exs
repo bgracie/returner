@@ -1,0 +1,30 @@
+# This file is responsible for configuring your application
+# and its dependencies with the aid of the Mix.Config module.
+#
+# This configuration file is loaded before any dependency and
+# is restricted to this project.
+
+# General application configuration
+use Mix.Config
+
+config :returner,
+  ecto_repos: [Returner.Repo]
+
+# Configures the endpoint
+config :returner, ReturnerWeb.Endpoint,
+  url: [host: "localhost"],
+  secret_key_base: "+0r8XtpacJ6eHbGtI3DR/LogyQeooMMcI7V2ndEeJewwVZMZAs20cRQZlNUIf99j",
+  render_errors: [view: ReturnerWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Returner.PubSub, adapter: Phoenix.PubSub.PG2]
+
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{Mix.env()}.exs"
