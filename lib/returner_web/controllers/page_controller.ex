@@ -2,6 +2,6 @@ defmodule ReturnerWeb.PageController do
   use ReturnerWeb, :controller
 
   def index(conn, _params) do
-    render(conn, "index.html")
+    redirect(conn, to: Routes.return_path(conn, :index))
   end
 end

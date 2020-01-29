@@ -17,6 +17,7 @@ defmodule ReturnerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/returns", ReturnController, :index
   end
 
   # Other scopes may use custom stacks.
