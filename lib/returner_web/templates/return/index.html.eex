@@ -1,7 +1,7 @@
 <h1>Past Year Returns</h1>
 
 <div id="returns-chart">
-  <%= raw Chartkick.line_chart(Poison.encode!(@chart_data)) %>
+  <%= raw Chartkick.line_chart(Jason.encode!(@chart_data), suffix: "%") %>
 </div>
 
 <div id="portfolio-average-return">
