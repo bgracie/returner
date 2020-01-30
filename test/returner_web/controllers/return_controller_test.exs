@@ -1,8 +1,6 @@
 defmodule ReturnerWeb.ReturnControllerTest do
   use ReturnerWeb.ConnCase
 
-  @moduletag :wip
-
   describe "GET /returns" do
     test "it shows the returns chart and the average returns", %{conn: conn} do
       conn = get(conn, "/returns")
