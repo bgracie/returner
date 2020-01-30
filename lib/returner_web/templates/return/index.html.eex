@@ -1,1 +1,12 @@
 <h1>Past Year Returns</h1>
+
+<div id="returns-chart">
+  <%= raw Chartkick.line_chart(Poison.encode!(@chart_data)) %>
+</div>
+
+<div id="portfolio-average-return">
+  <%="Portfolio Average Return: #{@portfolio_average_return}" %>
+</div>
+<div id="index-average-return">
+  <%="Index Average Return: #{@index_average_return}" %>
+</div>
