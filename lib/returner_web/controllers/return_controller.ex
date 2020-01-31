@@ -4,40 +4,42 @@ defmodule ReturnerWeb.ReturnController do
   @type chart_data :: list(%{name: String.t(), data: list({Date.t(), Decimal.t()})})
 
   def index(conn, _params) do
-    returns = %{
-      daily_returns: %{
-        portfolio_equities: [
-          %{
-            ticker: "FOO",
-            returns: [
-              {~D[2001-01-01], Decimal.new("1")},
-              {~D[2001-01-02], Decimal.new("4")},
-              {~D[2001-01-03], Decimal.new("5")}
-            ]
-          },
-          %{
-            ticker: "BAR",
-            returns: [
-              {~D[2001-01-01], Decimal.new("2.1")},
-              {~D[2001-01-02], Decimal.new("3")},
-              {~D[2001-01-03], Decimal.new("3")}
-            ]
-          }
-        ],
-        index: %{
-          ticker: "BAZ",
-          returns: [
-            {~D[2001-01-01], Decimal.new("2.1")},
-            {~D[2001-01-02], Decimal.new("3")},
-            {~D[2001-01-03], Decimal.new("3")}
+    prices = %{
+      portfolio_equities: [
+        %{
+          ticker: "FOO",
+          prices: [
+            {~D[2000-12-31], Money.new("1.0", :USD)},
+            {~D[2001-01-01], Money.new("1.1", :USD)},
+            {~D[2001-01-02], Money.new("1.2", :USD)},
+            {~D[2001-01-03], Money.new("1.3", :USD)}
+          ]
+        },
+        %{
+          ticker: "BAR",
+          prices: [
+            {~D[2000-12-31], Money.new("3.0", :USD)},
+            {~D[2001-01-01], Money.new("3.1", :USD)},
+            {~D[2001-01-02], Money.new("3.2", :USD)},
+            {~D[2001-01-03], Money.new("3.3", :USD)}
           ]
         }
-      },
-      average_returns: %{
-        portfolio: Decimal.new("1.2"),
-        index: Decimal.new("1.3")
+      ],
+      index: %{
+        ticker: "BAZ",
+        prices: [
+          {~D[2000-12-31], Money.new("2.0", :USD)},
+          {~D[2001-01-01], Money.new("2.1", :USD)},
+          {~D[2001-01-02], Money.new("2.2", :USD)},
+          {~D[2001-01-03], Money.new("2.3", :USD)}
+        ]
       }
     }
+
+    today = Date.utc_today()
+    {:ok, one_year_ago} = Date.new(today.year - 1, today.month, today.day)
+    query_range = Date.range(one_year_ago, today)
+    returns = Returner.build_returns(prices, query_range)
 
     render(conn, "index.html",
       chart_data: build_chart_data(returns.daily_returns),
