@@ -4,41 +4,10 @@ defmodule ReturnerWeb.ReturnController do
   @type chart_data :: list(%{name: String.t(), data: list({Date.t(), Decimal.t()})})
 
   def index(conn, _params) do
-    prices = %{
-      portfolio_equities: [
-        %{
-          ticker: "FOO",
-          prices: [
-            {~D[2000-12-31], Money.new("1.0", :USD)},
-            {~D[2001-01-01], Money.new("1.1", :USD)},
-            {~D[2001-01-02], Money.new("1.2", :USD)},
-            {~D[2001-01-03], Money.new("1.3", :USD)}
-          ]
-        },
-        %{
-          ticker: "BAR",
-          prices: [
-            {~D[2000-12-31], Money.new("3.0", :USD)},
-            {~D[2001-01-01], Money.new("3.1", :USD)},
-            {~D[2001-01-02], Money.new("3.2", :USD)},
-            {~D[2001-01-03], Money.new("3.3", :USD)}
-          ]
-        }
-      ],
-      index: %{
-        ticker: "BAZ",
-        prices: [
-          {~D[2000-12-31], Money.new("2.0", :USD)},
-          {~D[2001-01-01], Money.new("2.1", :USD)},
-          {~D[2001-01-02], Money.new("2.2", :USD)},
-          {~D[2001-01-03], Money.new("2.3", :USD)}
-        ]
-      }
-    }
-
     today = Date.utc_today()
-    {:ok, one_year_ago} = Date.new(today.year - 1, today.month, today.day)
+    one_year_ago = Date.add(today, -365)
     query_range = Date.range(one_year_ago, today)
+    prices = Returner.get_prices(query_range)
     returns = Returner.build_returns(prices, query_range)
 
     render(conn, "index.html",

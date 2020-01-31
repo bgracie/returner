@@ -5,8 +5,8 @@
 </div>
 
 <div id="portfolio-average-return">
-  <%="Portfolio Average Return: #{@portfolio_average_return}" %>
+  <%="Portfolio Average Return: #{@portfolio_average_return}%" %>
 </div>
 <div id="index-average-return">
-  <%="Index Average Return: #{@index_average_return}" %>
+  <%="Index Average Return: #{@index_average_return}%" %>
 </div>

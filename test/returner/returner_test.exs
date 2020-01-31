@@ -65,8 +65,8 @@ defmodule ReturnerTest do
           }
         },
         average_returns: %{
-          portfolio: Decimal.new("6.1"),
-          index: Decimal.new("4.7")
+          portfolio: Decimal.new("6.15"),
+          index: Decimal.new("4.73")
         }
       }
 
