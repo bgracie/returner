@@ -16,8 +16,6 @@ defmodule Returner.Cache do
     returns = Returner.FetchReturns.perform(build_query_range())
 
     Agent.update(__MODULE__, fn _state -> returns end)
-
-    returns
   end
 
   defp build_query_range do

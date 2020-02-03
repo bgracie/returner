@@ -9,6 +9,18 @@ defmodule Returner.FetchReturns do
     |> build_returns(query_range)
   end
 
+  @spec get_prices(DateRange.t()) :: Returner.prices()
+  def get_prices(query_range) do
+    %{
+      portfolio_equities: Enum.map(@portfolio_tickers, &fetch_equity_prices(&1, query_range)),
+      index: fetch_equity_prices(@index_ticker, query_range)
+    }
+  end
+
+  defp fetch_equity_prices(ticker, query_range) do
+    Returner.StockPriceApi.Client.fetch_equity_prices(ticker, query_range)
+  end
+
   @spec build_returns(Returner.prices(), Returner.query_range()) :: Returner.returns()
   def build_returns(prices, query_range) do
     daily_returns = build_daily_returns(prices, query_range)
@@ -45,7 +57,8 @@ defmodule Returner.FetchReturns do
          {current_date, current_date_closing_price}
        ]) do
     return =
-      Money.sub!(current_date_closing_price, previous_date_closing_price)
+      current_date_closing_price
+      |> Money.sub!(previous_date_closing_price)
       |> div_money(previous_date_closing_price)
       |> Decimal.mult(100)
       |> Decimal.round(1, :down)
@@ -85,17 +98,5 @@ defmodule Returner.FetchReturns do
     decimals
     |> Enum.reduce(&Decimal.add/2)
     |> Decimal.div(length(decimals))
-  end
-
-  @spec get_prices(DateRange.t()) :: Returner.prices()
-  def get_prices(query_range) do
-    %{
-      portfolio_equities: Enum.map(@portfolio_tickers, &fetch_equity_prices(&1, query_range)),
-      index: fetch_equity_prices(@index_ticker, query_range)
-    }
-  end
-
-  defp fetch_equity_prices(ticker, query_range) do
-    Returner.StockPriceApi.Client.fetch_equity_prices(ticker, query_range)
   end
 end
