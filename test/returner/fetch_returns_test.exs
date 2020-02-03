@@ -1,5 +1,20 @@
 defmodule Returner.FetchReturnsTest do
   use Returner.DataCase
+  import Mock
+
+  describe "fetch_returns/1" do
+    test "fetches returns for a given date range" do
+      with_mock Returner.StockPriceApi.Client,
+        fetch_equity_prices: &Returner.StockPriceApi.Client.Mock.fetch_equity_prices/2 do
+        date_range = Date.range(~D[2019-01-01], ~D[2019-01-05])
+
+        assert match?(
+                 %{daily_returns: _daily, average_returns: _average},
+                 Returner.FetchReturns.perform(date_range)
+               )
+      end
+    end
+  end
 
   describe "build_returns/1" do
     test "builds returns from prices for the given date range" do

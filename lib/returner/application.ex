@@ -14,7 +14,8 @@ defmodule Returner.Application do
       ReturnerWeb.Endpoint,
       # Starts a worker by calling: Returner.Worker.start_link(arg)
       # {Returner.Worker, arg},
-      {Returner.Cache, nil}
+      {Returner.Cache, nil},
+      {Task, &Returner.Cache.update_returns/0}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

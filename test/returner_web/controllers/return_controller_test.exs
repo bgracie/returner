@@ -5,8 +5,7 @@ defmodule ReturnerWeb.ReturnControllerTest do
 
   describe "GET /returns" do
     test "it shows the returns chart and the average returns", %{conn: conn} do
-      with_mock Returner.StockPriceApi.Client,
-        fetch_equity_prices: &Returner.StockPriceApi.Client.Mock.fetch_equity_prices/2 do
+      with_mock Returner, fetch_returns: &fetch_returns/0 do
         conn = get(conn, "/returns")
         page = html_response(conn, 200)
 
@@ -92,5 +91,13 @@ defmodule ReturnerWeb.ReturnControllerTest do
         ]
       }
     }
+  end
+
+  def fetch_returns do
+    {:ok,
+     %{
+       daily_returns: build_sample_daily_returns(),
+       average_returns: %{portfolio: Decimal.new("2"), index: Decimal.new("3")}
+     }}
   end
 end

@@ -25,9 +25,9 @@ defmodule Returner do
 
   @type returns :: %{daily_returns: daily_returns(), average_returns: average_returns()}
 
-  @spec fetch_returns(Date.Range.t()) :: {:ok, returns()} | {:error, any()}
-  def fetch_returns(query_range) do
-    {:ok, Returner.Cache.fetch_returns(query_range)}
+  @spec fetch_returns :: {:ok, returns()} | {:error, any()}
+  def fetch_returns() do
+    {:ok, Returner.Cache.fetch_returns()}
   end
 
   def portfolio_tickers, do: @portfolio_tickers
