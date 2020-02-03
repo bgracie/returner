@@ -9,6 +9,7 @@ defmodule Returner.StockPriceApi.ClientTest do
 
       expected_result = %{
         prices: [
+          {~D[2018-12-31], Money.new("101.5700", :USD)},
           {~D[2019-01-02], Money.new("101.1200", :USD)},
           {~D[2019-01-03], Money.new("97.4000", :USD)}
         ],

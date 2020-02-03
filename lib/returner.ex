@@ -110,16 +110,9 @@ defmodule Returner do
 
   @spec get_prices(DateRange.t()) :: prices()
   def get_prices(query_range) do
-    price_query_range =
-      Date.range(
-        Date.add(query_range.first, -1),
-        query_range.last
-      )
-
     %{
-      portfolio_equities:
-        Enum.map(@portfolio_tickers, &fetch_equity_prices(&1, price_query_range)),
-      index: fetch_equity_prices(@index_ticker, price_query_range)
+      portfolio_equities: Enum.map(@portfolio_tickers, &fetch_equity_prices(&1, query_range)),
+      index: fetch_equity_prices(@index_ticker, query_range)
     }
   end
 

@@ -38,8 +38,8 @@ defmodule Returner.StockPriceApi.Client do
       |> Enum.map(fn {date_string, prices} ->
         {Date.from_iso8601!(date_string), Money.new(prices["4. close"], :USD)}
       end)
-      |> Enum.filter(fn {date, _price} -> in_range?(date, query_range) end)
       |> Enum.sort(fn {date1, _price1}, {date2, _price2} -> Date.compare(date1, date2) != :gt end)
+      |> filter_by_range(query_range)
 
     %{
       ticker: ticker,
@@ -47,9 +47,22 @@ defmodule Returner.StockPriceApi.Client do
     }
   end
 
-  defp in_range?(date, date_range) do
-    Date.compare(date, date_range.first) in [:gt, :eq] &&
-      Date.compare(date, date_range.last) in [:lt, :eq]
+  defp filter_by_range(prices, query_range) do
+    first_date_in_period =
+      Enum.find_index(prices, fn {date, _price} ->
+        Date.compare(date, query_range.first) != :lt
+      end)
+
+    last_date_before_period = first_date_in_period - 1
+
+    first_date_after_period =
+      Enum.find_index(prices, fn {date, _price} ->
+        Date.compare(date, query_range.last) == :gt
+      end) || length(prices)
+
+    last_date_in_period = first_date_after_period - 1
+
+    Enum.slice(prices, last_date_before_period..last_date_in_period)
   end
 
   defmodule Mock do
@@ -59,9 +72,12 @@ defmodule Returner.StockPriceApi.Client do
 
     @impl true
     def fetch_equity_prices(ticker, query_range) do
+      adjusted_beginning = Date.add(query_range.first, -1)
+      adjusted_range = Date.range(adjusted_beginning, query_range.last)
+
       %{
         ticker: ticker,
-        prices: build_prices(query_range)
+        prices: build_prices(adjusted_range)
       }
     end
 
