@@ -1,5 +1,4 @@
 defmodule Returner do
-  @api_key Application.fetch_env!(:returner, :alpha_vantage_api_key)
   @portfolio_tickers [
     "AAPL",
     "GOOGL",
@@ -101,62 +100,24 @@ defmodule Returner do
     decimals
     |> Enum.reduce(&Decimal.add/2)
     |> Decimal.div(length(decimals))
-
-    # |> Decimal.round(1, :down)
   end
 
   @spec get_prices(DateRange.t()) :: prices()
   def get_prices(query_range) do
-    %{
-      portfolio_equities: Enum.map(@portfolio_tickers, &get_equity_prices(&1, query_range)),
-      index: get_equity_prices(@index_ticker, query_range)
-    }
-  end
-
-  @spec get_equity_prices(ticker(), DateRange.t()) :: equity_prices()
-  def get_equity_prices(ticker, query_range) do
     price_query_range =
       Date.range(
         Date.add(query_range.first, -1),
         query_range.last
       )
 
-    ticker
-    |> fetch_equity_prices()
-    |> build_equity_prices(ticker, price_query_range)
-  end
-
-  def fetch_equity_prices(ticker) do
-    {:ok, {{_httpv, 200, 'OK'}, _headers, body}} =
-      :httpc.request(:get, {build_equity_prices_query_url(ticker), []}, [], [])
-
-    Jason.decode!(body)
-  end
-
-  def build_equity_prices_query_url(ticker) do
-    ("https://www.alphavantage.co/query?" <>
-       "function=TIME_SERIES_DAILY&symbol=#{ticker}&outputsize=full&apikey=#{@api_key}")
-    |> String.to_charlist()
-  end
-
-  def build_equity_prices(response_body, ticker, query_range) do
-    prices =
-      response_body
-      |> Map.fetch!("Time Series (Daily)")
-      |> Enum.map(fn {date_string, prices} ->
-        {Date.from_iso8601!(date_string), Money.new(prices["4. close"], :USD)}
-      end)
-      |> Enum.filter(fn {date, _price} -> in_range?(date, query_range) end)
-      |> Enum.sort(fn {date1, _price1}, {date2, _price2} -> Date.compare(date1, date2) != :lt end)
-
     %{
-      ticker: ticker,
-      prices: prices
+      portfolio_equities:
+        Enum.map(@portfolio_tickers, &fetch_equity_prices(&1, price_query_range)),
+      index: fetch_equity_prices(@index_ticker, price_query_range)
     }
   end
 
-  defp in_range?(date, date_range) do
-    Date.compare(date, date_range.first) in [:gt, :eq] &&
-      Date.compare(date, date_range.last) in [:lt, :eq]
+  defp fetch_equity_prices(ticker, query_range) do
+    Returner.StockPriceApi.Client.fetch_equity_prices(ticker, query_range)
   end
 end
