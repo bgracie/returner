@@ -39,7 +39,7 @@ defmodule Returner.StockPriceApi.Client do
         {Date.from_iso8601!(date_string), Money.new(prices["4. close"], :USD)}
       end)
       |> Enum.filter(fn {date, _price} -> in_range?(date, query_range) end)
-      |> Enum.sort(fn {date1, _price1}, {date2, _price2} -> Date.compare(date1, date2) != :lt end)
+      |> Enum.sort(fn {date1, _price1}, {date2, _price2} -> Date.compare(date1, date2) != :gt end)
 
     %{
       ticker: ticker,
