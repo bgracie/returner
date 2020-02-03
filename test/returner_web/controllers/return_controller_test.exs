@@ -1,15 +1,20 @@
 defmodule ReturnerWeb.ReturnControllerTest do
   use ReturnerWeb.ConnCase
 
+  import Mock
+
   describe "GET /returns" do
     test "it shows the returns chart and the average returns", %{conn: conn} do
-      conn = get(conn, "/returns")
-      page = html_response(conn, 200)
+      with_mock Returner.StockPriceApi.Client,
+        fetch_equity_prices: &Returner.StockPriceApi.Client.Mock.fetch_equity_prices/2 do
+        conn = get(conn, "/returns")
+        page = html_response(conn, 200)
 
-      assert page =~ "Past Year Returns"
-      assert elem_exists?(page, "#returns-chart")
-      assert elem_exists?(page, "#portfolio-average-return")
-      assert elem_exists?(page, "#index-average-return")
+        assert page =~ "Past Year Returns"
+        assert elem_exists?(page, "#returns-chart")
+        assert elem_exists?(page, "#portfolio-average-return")
+        assert elem_exists?(page, "#index-average-return")
+      end
     end
   end
 

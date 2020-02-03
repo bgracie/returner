@@ -3,9 +3,15 @@ defmodule Returner.StockPriceApi.Client do
   Wraps the Alpha Vantage API
   """
 
+  defmodule Behavior do
+    @callback fetch_equity_prices(Returner.ticker(), DateRange.t()) :: Returner.equity_prices()
+  end
+
+  @behaviour __MODULE__.Behavior
+
   @api_key Application.fetch_env!(:returner, :alpha_vantage_api_key)
 
-  @spec fetch_equity_prices(Returner.ticker(), DateRange.t()) :: Returner.equity_prices()
+  @impl true
   def fetch_equity_prices(ticker, query_range) do
     ticker
     |> request_equity_prices()
@@ -44,5 +50,23 @@ defmodule Returner.StockPriceApi.Client do
   defp in_range?(date, date_range) do
     Date.compare(date, date_range.first) in [:gt, :eq] &&
       Date.compare(date, date_range.last) in [:lt, :eq]
+  end
+
+  defmodule Mock do
+    @behaviour Returner.StockPriceApi.Client.Behavior
+
+    @sample_money [Money.new(1, :USD), Money.new(2, :USD), Money.new(3, :USD)]
+
+    @impl true
+    def fetch_equity_prices(ticker, query_range) do
+      %{
+        ticker: ticker,
+        prices: build_prices(query_range)
+      }
+    end
+
+    defp build_prices(query_range) do
+      Enum.map(query_range, fn date -> {date, Enum.random(@sample_money)} end)
+    end
   end
 end

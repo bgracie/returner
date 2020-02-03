@@ -47,7 +47,8 @@ defmodule Returner.MixProject do
       {:floki, "~> 0.25.0"},
       {:chartkick, "~> 0.4.0"},
       {:decimal, "~>1.8.1"},
-      {:ex_money, "~> 5.0.1"}
+      {:ex_money, "~> 5.0.1"},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 
