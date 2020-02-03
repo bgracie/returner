@@ -4,9 +4,7 @@ defmodule ReturnerWeb.ReturnController do
   @type chart_data :: list(%{name: String.t(), data: list({Date.t(), Decimal.t()})})
 
   def index(conn, _params) do
-    today = Date.utc_today()
-    one_year_ago = Date.add(today, -365)
-    query_range = Date.range(one_year_ago, today)
+    query_range = build_query_range()
     prices = Returner.get_prices(query_range)
     returns = Returner.build_returns(prices, query_range)
 
@@ -30,5 +28,12 @@ defmodule ReturnerWeb.ReturnController do
       name: equity_daily_returns.ticker,
       data: equity_daily_returns.returns
     }
+  end
+
+  defp build_query_range do
+    today = Date.utc_today()
+    one_year_ago = Date.add(today, -365)
+
+    Date.range(one_year_ago, today)
   end
 end
