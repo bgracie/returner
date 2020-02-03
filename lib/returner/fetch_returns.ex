@@ -2,21 +2,22 @@ defmodule Returner.FetchReturns do
   @portfolio_tickers Returner.portfolio_tickers()
   @index_ticker Returner.index_ticker()
 
-  @spec perform(Date.Range.t()) :: Returner.returns()
+  @spec perform(Returner.query_range()) :: Returner.returns()
   def perform(query_range) do
     query_range
     |> get_prices()
     |> build_returns(query_range)
   end
 
-  @spec build_returns(Returner.prices(), Date.Range.t()) :: Returner.returns()
-  def build_returns(prices, date_range) do
-    daily_returns = build_daily_returns(prices, date_range)
+  @spec build_returns(Returner.prices(), Returner.query_range()) :: Returner.returns()
+  def build_returns(prices, query_range) do
+    daily_returns = build_daily_returns(prices, query_range)
     average_returns = build_average_returns(daily_returns)
 
     %{
       daily_returns: daily_returns,
-      average_returns: average_returns
+      average_returns: average_returns,
+      query_range: query_range
     }
   end
 

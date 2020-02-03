@@ -6,7 +6,10 @@ defmodule Returner.Cache do
   end
 
   def fetch_returns do
-    Agent.get(__MODULE__, & &1)
+    case Agent.get(__MODULE__, & &1) do
+      nil -> {:error, :not_loaded}
+      returns -> {:ok, returns}
+    end
   end
 
   def update_returns do

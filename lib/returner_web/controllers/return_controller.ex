@@ -4,13 +4,17 @@ defmodule ReturnerWeb.ReturnController do
   @type chart_data :: list(%{name: String.t(), data: list({Date.t(), Decimal.t()})})
 
   def index(conn, _params) do
-    {:ok, returns} = Returner.fetch_returns()
+    case Returner.fetch_returns() do
+      {:ok, returns} ->
+        render(conn, "index.html",
+          chart_data: build_chart_data(returns.daily_returns),
+          portfolio_average_return: returns.average_returns.portfolio,
+          index_average_return: returns.average_returns.index
+        )
 
-    render(conn, "index.html",
-      chart_data: build_chart_data(returns.daily_returns),
-      portfolio_average_return: returns.average_returns.portfolio,
-      index_average_return: returns.average_returns.index
-    )
+      {:error, :not_loaded} ->
+        render(conn, "not_loaded.html")
+    end
   end
 
   @spec build_chart_data(Returner.daily_returns()) :: chart_data()

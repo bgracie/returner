@@ -97,7 +97,8 @@ defmodule ReturnerWeb.ReturnControllerTest do
     {:ok,
      %{
        daily_returns: build_sample_daily_returns(),
-       average_returns: %{portfolio: Decimal.new("2"), index: Decimal.new("3")}
+       average_returns: %{portfolio: Decimal.new("2"), index: Decimal.new("3")},
+       query_range: Date.range(~D[2001-01-01], ~D[2001-01-02])
      }}
   end
 end

@@ -23,11 +23,17 @@ defmodule Returner do
 
   @type average_returns :: %{portfolio: return(), index: return()}
 
-  @type returns :: %{daily_returns: daily_returns(), average_returns: average_returns()}
+  @type query_range :: DateRange.t()
+
+  @type returns :: %{
+          query_range: query_range(),
+          daily_returns: daily_returns(),
+          average_returns: average_returns()
+        }
 
   @spec fetch_returns :: {:ok, returns()} | {:error, any()}
   def fetch_returns() do
-    {:ok, Returner.Cache.fetch_returns()}
+    Returner.Cache.fetch_returns()
   end
 
   def portfolio_tickers, do: @portfolio_tickers

@@ -6,12 +6,16 @@ defmodule Returner.FetchReturnsTest do
     test "fetches returns for a given date range" do
       with_mock Returner.StockPriceApi.Client,
         fetch_equity_prices: &Returner.StockPriceApi.Client.Mock.fetch_equity_prices/2 do
-        date_range = Date.range(~D[2019-01-01], ~D[2019-01-05])
+        query_range = Date.range(~D[2019-01-01], ~D[2019-01-05])
+
+        returns = Returner.FetchReturns.perform(query_range)
 
         assert match?(
-                 %{daily_returns: _daily, average_returns: _average},
-                 Returner.FetchReturns.perform(date_range)
+                 %{daily_returns: _daily, average_returns: _average, query_range: _query_range},
+                 returns
                )
+
+        assert returns.query_range == query_range
       end
     end
   end
@@ -50,6 +54,8 @@ defmodule Returner.FetchReturnsTest do
         }
       }
 
+      date_range = Date.range(~D[2001-01-01], ~D[2001-01-03])
+
       expected_returns = %{
         daily_returns: %{
           portfolio_equities: [
@@ -82,7 +88,8 @@ defmodule Returner.FetchReturnsTest do
         average_returns: %{
           portfolio: Decimal.new("6.15"),
           index: Decimal.new("4.73")
-        }
+        },
+        query_range: date_range
       }
 
       date_range = Date.range(~D[2001-01-01], ~D[2001-01-03])
