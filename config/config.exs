@@ -7,9 +7,6 @@
 # General application configuration
 use Mix.Config
 
-config :returner,
-  ecto_repos: [Returner.Repo]
-
 # Configures the endpoint
 config :returner, ReturnerWeb.Endpoint,
   url: [host: "localhost"],

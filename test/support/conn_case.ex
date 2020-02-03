@@ -28,13 +28,7 @@ defmodule ReturnerWeb.ConnCase do
     end
   end
 
-  setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Returner.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Returner.Repo, {:shared, self()})
-    end
-
+  setup _tags do
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
