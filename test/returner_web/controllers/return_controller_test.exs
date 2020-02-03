@@ -30,34 +30,7 @@ defmodule ReturnerWeb.ReturnControllerTest do
 
   describe "build_chart_data/1" do
     test "builds chart data from daily returns" do
-      daily_returns = %{
-        portfolio_equities: [
-          %{
-            ticker: "FOO",
-            returns: [
-              {~D[2001-01-01], Decimal.new("1")},
-              {~D[2001-01-02], Decimal.new("4")},
-              {~D[2001-01-03], Decimal.new("5")}
-            ]
-          },
-          %{
-            ticker: "BAR",
-            returns: [
-              {~D[2001-01-01], Decimal.new("2.1")},
-              {~D[2001-01-02], Decimal.new("3")},
-              {~D[2001-01-03], Decimal.new("3")}
-            ]
-          }
-        ],
-        index: %{
-          ticker: "BAZ",
-          returns: [
-            {~D[2001-01-01], Decimal.new("2.1")},
-            {~D[2001-01-02], Decimal.new("3")},
-            {~D[2001-01-03], Decimal.new("3")}
-          ]
-        }
-      }
+      daily_returns = build_sample_daily_returns()
 
       expected_chart_data = [
         %{
@@ -88,5 +61,36 @@ defmodule ReturnerWeb.ReturnControllerTest do
 
       assert ReturnerWeb.ReturnController.build_chart_data(daily_returns) == expected_chart_data
     end
+  end
+
+  defp build_sample_daily_returns do
+    %{
+      portfolio_equities: [
+        %{
+          ticker: "FOO",
+          returns: [
+            {~D[2001-01-01], Decimal.new("1")},
+            {~D[2001-01-02], Decimal.new("4")},
+            {~D[2001-01-03], Decimal.new("5")}
+          ]
+        },
+        %{
+          ticker: "BAR",
+          returns: [
+            {~D[2001-01-01], Decimal.new("2.1")},
+            {~D[2001-01-02], Decimal.new("3")},
+            {~D[2001-01-03], Decimal.new("3")}
+          ]
+        }
+      ],
+      index: %{
+        ticker: "BAZ",
+        returns: [
+          {~D[2001-01-01], Decimal.new("2.1")},
+          {~D[2001-01-02], Decimal.new("3")},
+          {~D[2001-01-03], Decimal.new("3")}
+        ]
+      }
+    }
   end
 end

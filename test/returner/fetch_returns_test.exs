@@ -1,4 +1,4 @@
-defmodule ReturnerTest do
+defmodule Returner.FetchReturnsTest do
   use Returner.DataCase
 
   describe "build_returns/1" do
@@ -71,7 +71,7 @@ defmodule ReturnerTest do
       }
 
       date_range = Date.range(~D[2001-01-01], ~D[2001-01-03])
-      calculated_returns = Returner.build_returns(prices, date_range)
+      calculated_returns = Returner.FetchReturns.build_returns(prices, date_range)
       assert calculated_returns == expected_returns
     end
   end

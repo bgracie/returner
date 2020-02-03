@@ -6,7 +6,7 @@ defmodule ReturnerWeb.ReturnController do
   def index(conn, _params) do
     query_range = build_query_range()
 
-    returns = Returner.get_returns(query_range)
+    {:ok, returns} = Returner.fetch_returns(query_range)
 
     render(conn, "index.html",
       chart_data: build_chart_data(returns.daily_returns),
