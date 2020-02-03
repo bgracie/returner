@@ -25,6 +25,12 @@ defmodule Returner do
 
   @type returns :: %{daily_returns: daily_returns(), average_returns: average_returns()}
 
+  def get_returns(query_range) do
+    query_range
+    |> get_prices()
+    |> build_returns(query_range)
+  end
+
   @spec build_returns(prices(), Date.Range.t()) :: returns()
   def build_returns(prices, date_range) do
     daily_returns = build_daily_returns(prices, date_range)
